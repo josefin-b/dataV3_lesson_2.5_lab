@@ -26,12 +26,20 @@ select datediff('2006-02-14 15:16:03', '2005-05-24 22:53:30') as days_operating;
 #select datediff(min(rental_date), max(rental_date)) as days_operating from rental;
 
 -- 7 Show rental info with additional columns month and weekday. Get 20 results.
-select *, date_format(convert(rental_date, date), '%M') as month, dayname(rental_date) as weekday from rental
+select *, date_format(rental_date, '%M') as month, dayname(rental_date) as weekday from rental
 limit 20;
 
 -- 8 Add an additional column day_type with values 'weekend' and 'workday' depending on the rental day of the week.
 alter table rental
 add column day_type varchar(20) after last_update;
+
+select *,
+case 
+	when dayname(rental_date) in ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday') then 'Workday'
+    when dayname(rental_date) in ('Saturday', 'Sunday') then 'Weekend'
+    
+end as day_type
+from rental;
 
 -- 9 How many rentals were in the last month of activity?
 select date(max(rental_date)) - interval 30 day, date(max(rental_date))
